@@ -14,6 +14,12 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 1
 time_out = 2
 
+max_fps = 15
+count_fps = 0
+last_fps_time = time.time()
+no_viewer = False
+
+
 cam = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -29,6 +35,14 @@ last_rec_time = time.time()
 
 
 while True:
+    time.sleep(1/max_fps)
+    count_fps += 1
+
+    if time.time() - last_fps_time >= 1:
+        last_fps_time = time.time()
+        print('fps:', count_fps,'current face:', mapper[str(last_rec)] if last_rec else 'No one')
+        count_fps = 0
+
     ret, img =cam.read()
     gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     faces=faceCascade.detectMultiScale(gray, 1.2,5)
@@ -39,18 +53,26 @@ while True:
             last_rec_time = time.time()
 
     for(x,y,w,h) in faces:
-        cv2.rectangle(img,(x,y),(x+w,y+h),(225,0,0),2)
+        if not no_viewer:
+            cv2.rectangle(img,(x,y),(x+w,y+h),(225,0,0),2)
+
         Id, conf = recognizer.predict(gray[y:y+h,x:x+w])
 
         text = str(mapper[str(Id)])
         pos = (x,y+h)
 
-        cv2.putText(img, text, pos, font, fontScale, color, thickness, cv2.LINE_AA)
+        if Id is not last_rec:
+            time_struct = time.localtime()
+            print(str(time_struct.tm_hour).zfill(2)+':'+str(time_struct.tm_min).zfill(2) + ':' + str(time_struct.tm_sec).zfill(2), text)
+
+        if not no_viewer:
+           cv2.putText(img, text, pos, font, fontScale, color, thickness, cv2.LINE_AA)
 
         last_rec = Id
         last_rec_time = time.time()
 
-    cv2.imshow('im',img)
+    if not no_viewer:
+        cv2.imshow('im',img)
 
     if cv2.waitKey(10) & 0xFF==ord('q'):
         break

@@ -2,7 +2,7 @@ import os
 
 constants = {
     'samples_folder' : 'samples',
-    'samples_map_file' : 'samples\\samples-map.txt',
+    'samples_map_file' : 'samples/samples-map.txt',
     'trained_folder' : 'trained/trainner.yml'
 }
 
