@@ -21,7 +21,7 @@ def getImagesAndLabels(path, map_path):
         if not sample_folder or len(sample_folder.split('.')) > 1:
             continue
 
-        folder = sample_folder.split("\\")[1]
+        folder = sample_folder.split("/")[1]
         imagePaths=[os.path.join(sample_folder,f) for f in os.listdir(sample_folder)]
         print(folder) #################
         
