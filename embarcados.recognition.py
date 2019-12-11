@@ -57,6 +57,12 @@ while True:
             cv2.rectangle(img,(x,y),(x+w,y+h),(225,0,0),2)
 
         Id, conf = recognizer.predict(gray[y:y+h,x:x+w])
+        print("==>", mapper[str(Id)], conf)
+        
+        if conf > 70:
+            last_rec = 0
+            last_rec_time = time.time()
+            continue
 
         text = str(mapper[str(Id)])
         pos = (x,y+h)
@@ -67,7 +73,7 @@ while True:
 
         if not no_viewer:
            cv2.putText(img, text, pos, font, fontScale, color, thickness, cv2.LINE_AA)
-
+                          
         last_rec = Id
         last_rec_time = time.time()
 
